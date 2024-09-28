@@ -1,5 +1,6 @@
+// StartScreen.js
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Modal, Text } from 'react-native';
 import CustomButton from '../components/CustomButton';
 import InputField from '../components/InputField';
 import Card from '../components/Card';
@@ -13,6 +14,7 @@ const StartScreen = ({ onRegister }) => {
   const [isNameValid, setIsNameValid] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPhoneValid, setIsPhoneValid] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
 
   const validateName = (input) => /^[A-Za-z\s]{2,}$/.test(input);
   const validateEmail = (input) => /\S+@\S+\.\S+/.test(input);
@@ -30,10 +32,19 @@ const StartScreen = ({ onRegister }) => {
 
   const registerHandler = () => {
     if (validateName(name) && validateEmail(email) && validatePhone(phone)) {
-      onRegister();
+      setIsModalVisible(true); // Show the modal
     } else {
       alert('Please ensure all fields are correctly filled out.');
     }
+  };
+
+  const goBackHandler = () => {
+    setIsModalVisible(false); // Hide the modal
+  };
+
+  const continueHandler = () => {
+    setIsModalVisible(false); // Hide the modal
+    onRegister(); // Proceed to the next step (passed from App.js)
   };
 
   return (
@@ -90,6 +101,28 @@ const StartScreen = ({ onRegister }) => {
           />
         </View>
       </Card>
+
+      {/* Modal for Confirmation Screen */}
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        animationType="slide"
+      >
+        <View style={styles.modalBackground}>
+          <Card>
+            <Text style={styles.modalText}>Hello {name}</Text>
+            <Text style={styles.modalText}>Here is the information you entered:</Text>
+            <Text style={styles.modalText}>{email}</Text>
+            <Text style={styles.modalText}>{phone}</Text>
+            <Text style={styles.modalText}>If it is not correct, please go back and edit them.</Text>
+
+            <View style={styles.buttonContainer}>
+              <CustomButton title="Go back" color="red" onPress={goBackHandler} />
+              <CustomButton title="Continue" color="blue" onPress={continueHandler} />
+            </View>
+          </Card>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -104,6 +137,17 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background with rgba color
+  },
+  modalText: {
+    fontSize: 16,
+    color: 'purple',
+    marginVertical: 5,
   },
 });
 

@@ -1,45 +1,35 @@
-// import React from 'react';
-// import { View, StyleSheet } from 'react-native';
-// import StartScreen from './screens/StartScreen'; // Ensure this path is correct
-// import CustomButton from './components/CustomButton'; // Assuming CustomButton is a default export
-
-// export default function App() {
-//   const handleRegister = () => {
-//     console.log('Registration successful!');
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       {/* <CustomButton title="Press me" onPress={() => console.log('Button pressed')} /> */}
-//       <StartScreen onRegister={handleRegister} />
-
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// });
-// App.js
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import StartScreen from './screens/StartScreen';
+import GameScreen from './screens/GameScreen';
+import GameOver from './components/GameOver';
 
 export default function App() {
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameOverReason, setGameOverReason] = useState('');
 
   const handleRegister = () => {
-    setIsGameStarted(true); // Update state to move to the next screen (in future steps)
+    setIsGameStarted(true);
+  };
+
+  const handleGameOver = (reason) => {
+    setIsGameOver(true);
+    setGameOverReason(reason);
+  };
+
+  const handleNewGame = () => {
+    setIsGameStarted(false);
+    setIsGameOver(false);
+    setGameOverReason('');
+    // Additional reset logic, if needed
   };
 
   return (
     <View style={styles.container}>
-      {!isGameStarted && <StartScreen onRegister={handleRegister} />}
-      {/* In future steps, add GameScreen here based on isGameStarted */}
+      {!isGameStarted && !isGameOver && <StartScreen onRegister={handleRegister} />}
+      {isGameStarted && !isGameOver && <GameScreen onGameOver={handleGameOver} />}
+      {isGameOver && <GameOver reason={gameOverReason} onNewGame={handleNewGame} />}
     </View>
   );
 }
@@ -49,5 +39,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#ADD8E6',
+    paddingHorizontal: 0,
+    margin: 0,
   },
 });

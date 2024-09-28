@@ -1,4 +1,3 @@
-// StartScreen.js
 import React, { useState } from 'react';
 import { View, StyleSheet, Modal, Text } from 'react-native';
 import CustomButton from '../components/CustomButton';
@@ -38,14 +37,35 @@ const StartScreen = ({ onRegister }) => {
     }
   };
 
+  const continueHandler = () => {
+    setIsModalVisible(false);
+    onRegister(phone); // Pass phone number to the next step in App.js
+  };
+
   const goBackHandler = () => {
     setIsModalVisible(false); // Hide the modal
   };
 
-  const continueHandler = () => {
-    setIsModalVisible(false); // Hide the modal
-    onRegister(); // Proceed to the next step (passed from App.js)
+
+  // Inside GameScreen.js
+  const handleGuess = () => {
+    if (userGuess === chosenNumber) {
+      setIsGameOver(true);
+      setGameOverReason('You guessed correctly!');
+    } else {
+      // Decrement attempts or check timer
+      if (attemptsLeft <= 1) {
+        onGameOver('You are out of attempts');
+      } else {
+        setAttemptsLeft(attemptsLeft - 1);
+      }
+    }
   };
+
+  const handleTimerEnd = () => {
+    onGameOver('You are out of time');
+  };
+
 
   return (
     <View style={styles.container}>

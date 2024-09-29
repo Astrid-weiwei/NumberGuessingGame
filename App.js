@@ -1,18 +1,35 @@
-// App.js
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import StartScreen from './screens/StartScreen';
+import GameScreen from './screens/GameScreen';
+import GameOver from './components/GameOver';
 
 export default function App() {
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameOverReason, setGameOverReason] = useState('');
 
   const handleRegister = () => {
-    setIsRegistered(true);
+    setIsGameStarted(true);
+  };
+
+  const handleGameOver = (reason) => {
+    setIsGameOver(true);
+    setGameOverReason(reason);
+  };
+
+  const handleNewGame = () => {
+    setIsGameStarted(false);
+    setIsGameOver(false);
+    setGameOverReason('');
+    // Additional reset logic, if needed
   };
 
   return (
     <View style={styles.container}>
-      {!isRegistered && <StartScreen onRegister={handleRegister} />}
+      {!isGameStarted && !isGameOver && <StartScreen onRegister={handleRegister} />}
+      {isGameStarted && !isGameOver && <GameScreen onGameOver={handleGameOver} />}
+      {isGameOver && <GameOver reason={gameOverReason} onNewGame={handleNewGame} />}
     </View>
   );
 }
@@ -20,5 +37,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ADD8E6',
+    paddingHorizontal: 0,
+    margin: 0,
   },
 });

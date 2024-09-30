@@ -1,4 +1,3 @@
-// screens/GameScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, Image } from 'react-native';
 import Card from '../components/Card';

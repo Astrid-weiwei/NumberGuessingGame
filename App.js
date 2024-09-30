@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import StartScreen from './screens/StartScreen';
+import ConfirmScreen from './screens/ConfirmScreen';
 import GameScreen from './screens/GameScreen';
 import GameOver from './components/GameOver';
 
 export default function App() {
-  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState('start');
+  const [userData, setUserData] = useState({ name: '', email: '', phone: '' });
   const [isGameOver, setIsGameOver] = useState(false);
   const [gameOverReason, setGameOverReason] = useState('');
 
-  const handleRegister = () => {
-    setIsGameStarted(true);
+  const handleRegister = (name, email, phone) => {
+    setUserData({ name, email, phone });
+    setCurrentScreen('confirm');
+  };
+
+  const handleConfirmContinue = () => {
+    setCurrentScreen('game');
+  };
+
+  const handleConfirmGoBack = () => {
+    setCurrentScreen('start');
   };
 
   const handleGameOver = (reason) => {
@@ -19,16 +30,29 @@ export default function App() {
   };
 
   const handleNewGame = () => {
-    setIsGameStarted(false);
+    setCurrentScreen('start');
     setIsGameOver(false);
     setGameOverReason('');
-    // Additional reset logic, if needed
+    setUserData({ name: '', email: '', phone: '' });
   };
 
   return (
     <View style={styles.container}>
-      {!isGameStarted && !isGameOver && <StartScreen onRegister={handleRegister} />}
-      {isGameStarted && !isGameOver && <GameScreen onGameOver={handleGameOver} />}
+      {currentScreen === 'start' && !isGameOver && (
+        <StartScreen onRegister={handleRegister} />
+      )}
+      {currentScreen === 'confirm' && (
+        <ConfirmScreen
+          name={userData.name}
+          email={userData.email}
+          phone={userData.phone}
+          onGoBack={handleConfirmGoBack}
+          onContinue={handleConfirmContinue}
+        />
+      )}
+      {currentScreen === 'game' && !isGameOver && (
+        <GameScreen phoneLastDigit={userData.phone.slice(-1)} onGameOver={handleGameOver} />
+      )}
       {isGameOver && <GameOver reason={gameOverReason} onNewGame={handleNewGame} />}
     </View>
   );
